@@ -1,0 +1,35 @@
+# Configuration for VinDr-Mammo dataset
+dataset:
+  name: "vin_dr_mammo"
+  data_path: "./data/"
+  views:
+    vin_dr_mammo: ["cc", "mlo"]
+  label_type: "max_lesion"
+
+model:
+  feature_extractor: "convnext_tiny"
+  in_dim: 769
+  hidden_dims: [512, 256, 128, 64]
+  num_classes: 3  # normal, benign, malignant
+  num_views: 2
+
+training:
+  learning_rate: 0.0005
+  batch_size: 16
+  epochs: 80
+  optimizer: "adam"
+  weight_decay: 0.00001
+  early_stopping_patience: 10
+  device: "cuda"
+  missing_view_rate: 0.0
+
+evaluation:
+  missing_view_rates: [0.0, 0.2, 0.5, 0.7, 1.0]
+  imputation_methods: ["constant", "learnable", "rag", "covariance"]
+  test_sets: ["full_view", "miss_view"]
+  metrics: ["accuracy", "auc", "f1_macro"]
+
+utils:
+  rag_db_size: 200
+  covariance_db_size: 200
+

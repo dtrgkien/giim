@@ -1,0 +1,36 @@
+## config.yaml
+dataset:
+  name: "liver_ct"  # Options: "liver_ct", "vin_dr_mammo", "breastdm"
+  data_path: "./data/"
+  views:
+    liver_ct: ["arterial", "venous", "delay"]
+    vin_dr_mammo: ["cc", "mlo"]
+    breastdm: ["pre_contrast", "post_contrast", "subtraction"]
+  label_type: "max_lesion"  # For mammo: global label = max lesion BI-RADS; for CT/MRI: lesion-level classification
+
+model:
+  feature_extractor: "convnext_tiny"
+  in_dim: 769  # 768 (ConvNeXt) + 1 (bias), L2 normalized
+  hidden_dims: [512, 256, 128, 64]  # Matches original 4-layer config
+  num_classes: 4  # liver_ct: 4 (benign, ambiguous, malignant, HCC); breastdm: 2; vin_dr_mammo: 3
+  num_views: 3  # liver_ct: 3 (venous, arterial, delay)
+
+training:
+  learning_rate: 0.001
+  batch_size: 8
+  epochs: 100
+  optimizer: "adam"
+  weight_decay: 0.00001
+  early_stopping_patience: 10
+  device: "cuda" if torch.cuda.is_available() else "cpu"
+  missing_view_rate: 0.0  # Training on full views only; imputation used during evaluation
+
+evaluation:
+  missing_view_rates: [0.0, 0.2, 0.5, 0.7, 1.0]
+  imputation_methods: ["constant", "learnable", "rag", "covariance"]
+  test_sets: ["full_view", "miss_view"]
+  metrics: ["accuracy", "auc", "f1_macro"]
+
+utils:
+  rag_db_size: 100  # Number of complete training samples to use as database for RAG imputation
+  covariance_db_size: 100  # Number of complete training samples to compute covariance matrix

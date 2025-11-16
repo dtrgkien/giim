@@ -1,0 +1,27 @@
+# Include documentation
+include README.md
+include LICENSE
+include CITATION.bib
+include CONTRIBUTING.md
+
+# Include configuration files
+recursive-include configs *.yaml
+
+# Include documentation
+recursive-include docs *.md *.rst *.png *.jpg
+
+# Include tests
+recursive-include tests *.py
+
+# Exclude compiled files
+global-exclude *.pyc *.pyo __pycache__
+
+# Exclude version control
+global-exclude .git* .svn*
+
+# Exclude IDE files
+global-exclude .vscode .idea
+
+# Exclude data and outputs
+global-exclude data/* checkpoints/* logs/* outputs/*
+
